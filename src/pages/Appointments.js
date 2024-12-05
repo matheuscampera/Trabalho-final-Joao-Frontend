@@ -4,14 +4,7 @@ import "../styles/Appointments.css";
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
-  const [newAppointment, setNewAppointment] = useState({
-    date: "",
-    time: "",
-    reason: "",
-    status: "Pendente",
-    patientId: "",
-    doctorId: "",
-  });
+
 
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -39,6 +32,29 @@ const Appointments = () => {
     }
   };
 
+  const [newAppointment, setNewAppointment] = useState({
+    date: "",
+    time: "",
+    reason: "",
+    status: "Pendente",
+    patient: {
+      id: 1,
+      name: '',
+      birthDate: '',
+      cpf: '',
+      phone: '',
+      email: ''
+    },
+    doctor: {
+      id: 1,
+      name: '',
+      specialty: '',
+      crm: '',
+      phone: '',
+      email: ''
+    }
+  });
+
   // Função para lidar com a mudança dos campos de input
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +66,7 @@ const Appointments = () => {
     e.preventDefault();
 
     // Converter a data e hora para o formato correto (YYYY-MM-DDTHH:mm)
-    const { date, time } = newAppointment;
+    const { date, time, reason, status, patientId, doctorId } = newAppointment;
     const dateTime = new Date(date.split('-').join('/')); // Converte a data para o formato MM/DD/YYYY
     const [hours, minutes] = time.split(':'); // Separa a hora e os minutos
     dateTime.setHours(hours, minutes); // Define a hora e os minutos na data
@@ -58,13 +74,14 @@ const Appointments = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/appointments', {
         ...newAppointment,
-        date: dateTime,  // Enviar a data e hora combinados
+        date: dateTime,
       });
 
-      console.log('Resposta do servidor:', response.data);
+      console.log('Resposta do servidor:', response);
       alert('Consulta cadastrada com sucesso!');
       loadAppointments();  // Carregar consultas após o cadastro
-    } catch (error) {
+    } catch (error) { 
+      console.log(error)
       alert('Erro ao cadastrar consulta!');
     }
   };
